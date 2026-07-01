@@ -1,0 +1,210 @@
+/*
+Theme Name: MM Theme
+Theme URI: https://github.com/mazaheri/mm-theme
+Author: Mazz Marketing
+Author URI: https://www.instagram.com/mazz_marketing
+Description: Mazz Marketing site theme. Currently ships the Coming Soon launch screen; additional page templates land in later updates.
+Version: 1.0.0
+Requires at least: 6.0
+Requires PHP: 7.4
+Text Domain: mm-theme
+*/
+
+:root {
+	color-scheme: dark;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background: linear-gradient(-45deg, #0b0d1a, #1a1033, #2b0f3d, #101826, #0b0d1a);
+	background-size: 400% 400%;
+	animation: mm-gradient-shift 18s ease infinite;
+	position: relative;
+}
+
+/* Soft moving glow accents — GPU-composited, no layout cost */
+body::before,
+body::after {
+	content: "";
+	position: absolute;
+	border-radius: 50%;
+	filter: blur(60px);
+	opacity: 0.35;
+	will-change: transform;
+	pointer-events: none;
+}
+
+body::before {
+	width: 45vw;
+	height: 45vw;
+	background: #7c3aed;
+	top: -10%;
+	left: -10%;
+	animation: mm-float-1 14s ease-in-out infinite;
+}
+
+body::after {
+	width: 40vw;
+	height: 40vw;
+	background: #ec4899;
+	bottom: -10%;
+	right: -10%;
+	animation: mm-float-2 16s ease-in-out infinite;
+}
+
+@keyframes mm-gradient-shift {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@keyframes mm-float-1 {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(8vw, 6vh) scale(1.15);
+	}
+}
+
+@keyframes mm-float-2 {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+	}
+	50% {
+		transform: translate(-6vw, -8vh) scale(1.1);
+	}
+}
+
+.mm-container {
+	position: relative;
+	z-index: 1;
+	text-align: center;
+	padding: 24px;
+	animation: mm-fade-up 1s ease-out both;
+}
+
+.mm-brand {
+	font-size: clamp(1rem, 2.5vw, 1.4rem);
+	letter-spacing: 0.35em;
+	text-transform: uppercase;
+	color: #c9c3e0;
+	margin-bottom: 1.5rem;
+	opacity: 0.85;
+}
+
+.mm-heading {
+	font-size: clamp(2.75rem, 10vw, 7rem);
+	font-weight: 800;
+	line-height: 1.05;
+	background: linear-gradient(90deg, #ffffff, #c9b8ff, #ffffff);
+	background-size: 200% auto;
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: transparent;
+	animation: mm-shine 6s linear infinite;
+	letter-spacing: -0.02em;
+}
+
+@keyframes mm-shine {
+	to {
+		background-position: 200% center;
+	}
+}
+
+.mm-tagline {
+	margin-top: 1.25rem;
+	font-size: clamp(0.95rem, 2vw, 1.15rem);
+	color: #a8a3c2;
+	font-weight: 400;
+}
+
+.mm-socials {
+	margin-top: 2.5rem;
+	display: flex;
+	gap: 1.25rem;
+	justify-content: center;
+}
+
+.mm-socials a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 46px;
+	height: 46px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.06);
+	border: 1px solid rgba(255, 255, 255, 0.15);
+	color: #fff;
+	transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
+	backdrop-filter: blur(4px);
+}
+
+.mm-socials a:hover,
+.mm-socials a:focus-visible {
+	transform: translateY(-4px);
+	background: rgba(255, 255, 255, 0.14);
+	border-color: rgba(255, 255, 255, 0.35);
+}
+
+.mm-socials svg {
+	width: 20px;
+	height: 20px;
+	fill: currentColor;
+}
+
+@keyframes mm-fade-up {
+	from {
+		opacity: 0;
+		transform: translateY(16px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mm-footer {
+	position: absolute;
+	bottom: 22px;
+	left: 0;
+	right: 0;
+	text-align: center;
+	font-size: 0.75rem;
+	color: rgba(255, 255, 255, 0.35);
+	z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body,
+	body::before,
+	body::after,
+	.mm-heading,
+	.mm-container {
+		animation: none !important;
+	}
+}
