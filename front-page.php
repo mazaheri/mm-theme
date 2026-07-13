@@ -468,7 +468,7 @@ get_header();
       <h2>Not sure what to fix first?</h2>
       <p>Request a focused 30-minute clarity call. We will discuss your current marketing situation, the goal that matters most and the most useful next step for your business.</p>
       <p>You are not committing to a project by requesting the call. The purpose is to gain clarity before spending more time, budget or energy in the wrong place.</p>
-      <div class="meetergo-iframe" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya" data-align="center"></div>
+      <a href="#contact" class="btn btn-primary btn-large meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">Book your free clarity call &rarr;</a>
       <p class="cta-microcopy">You do not need to know whether the issue is SEO, ads, tracking, your website or something else. A website link and a short description of your goal are enough to start.</p>
     </div>
   </section>
