@@ -10,6 +10,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'MM_THEME_VERSION', '1.0.0' );
 
 /**
+ * Look up a WP attachment imported by Import Demo from a theme file path
+ * (see inc/demo-importer.php). Needed on the front end, so it lives here
+ * rather than in the admin-only importer file.
+ */
+function mm_theme_find_attachment_by_source_path( $full_path ) {
+	$existing = get_posts( [
+		'post_type'      => 'attachment',
+		'post_status'    => 'any',
+		'posts_per_page' => 1,
+		'fields'         => 'ids',
+		'meta_query'     => [ [ 'key' => '_source_file_path', 'value' => wp_normalize_path( $full_path ) ] ],
+	] );
+	return $existing ? (int) $existing[0] : 0;
+}
+
+/**
  * Theme setup.
  */
 function mm_theme_setup() {
@@ -35,6 +51,18 @@ function mm_theme_suppress_auto_title_on_homepage() {
 	}
 }
 add_action( 'wp_head', 'mm_theme_suppress_auto_title_on_homepage', 0 );
+
+/**
+ * header.php links the theme's own hand-tuned favicon set directly
+ * (ICO + SVG + PNG sizes + Apple touch icon) on the front end. Remove
+ * WordPress's auto-generated Site Icon <link> tags there to avoid
+ * duplicate/conflicting favicon markup — the Site Icon option is still
+ * set (see inc/demo-importer.php) so wp-admin's own UI has an icon.
+ */
+function mm_theme_remove_auto_site_icon_markup() {
+	remove_action( 'wp_head', 'wp_site_icon', 99 );
+}
+add_action( 'init', 'mm_theme_remove_auto_site_icon_markup' );
 
 /**
  * Enqueue styles. The homepage's stylesheet and fonts are linked directly
@@ -169,3 +197,12 @@ function mm_theme_customize_register( $wp_customize ) {
 	] );
 }
 add_action( 'customize_register', 'mm_theme_customize_register' );
+
+/**
+ * Import Demo admin page (Appearance → Import Demo) — pushes theme image
+ * assets (founder photo, site icon) into the database as real WP
+ * attachments. See inc/demo-importer.php.
+ */
+if ( is_admin() ) {
+	require get_template_directory() . '/inc/demo-importer.php';
+}

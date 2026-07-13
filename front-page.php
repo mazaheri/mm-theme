@@ -10,7 +10,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$about_photo_url = get_template_directory_uri() . '/content/images/homepage/about-photo.png';
+$about_photo_id  = mm_theme_find_attachment_by_source_path( get_template_directory() . '/content/images/homepage/about-photo.png' );
+$about_photo_url = $about_photo_id
+	? wp_get_attachment_image_url( $about_photo_id, 'full' )
+	: get_template_directory_uri() . '/content/images/homepage/about-photo.png';
 
 get_header();
 ?>

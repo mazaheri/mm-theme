@@ -1,0 +1,14 @@
+<svg width="940" height="256" viewBox="0 0 940 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="g" x1="0" y1="256" x2="256" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#f5a623"/>
+      <stop offset="0.5" stop-color="#e8548c"/>
+      <stop offset="1" stop-color="#9b4de0"/>
+    </linearGradient>
+  </defs>
+  <path d="M40 208 L40 64 L96 152 L128 96 L160 152 L216 64 L216 208"
+        fill="none" stroke="url(#g)" stroke-width="26"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="272" y="165" font-family="Plus Jakarta Sans, -apple-system, BlinkMacSystemFont, sans-serif"
+        font-weight="700" font-size="88" letter-spacing="-2" fill="#000000">Mazz Marketing</text>
+</svg>
