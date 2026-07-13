@@ -468,7 +468,7 @@ get_header();
       <h2>Not sure what to fix first?</h2>
       <p>Request a focused 30-minute clarity call. We will discuss your current marketing situation, the goal that matters most and the most useful next step for your business.</p>
       <p>You are not committing to a project by requesting the call. The purpose is to gain clarity before spending more time, budget or energy in the wrong place.</p>
-      <!-- TODO: booking widget (Calendly / SimplyBook) goes here -->
+      <div class="meetergo-iframe" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya" data-align="center"></div>
       <p class="cta-microcopy">You do not need to know whether the issue is SEO, ads, tracking, your website or something else. A website link and a short description of your goal are enough to start.</p>
     </div>
   </section>
@@ -562,5 +562,23 @@ get_header();
   });
 })();
 </script>
+
+<!-- meetergo widget start -->
+<script>
+  window.meetergo = window.meetergo || function(){ (window.meetergo.q = window.meetergo.q || []).push(arguments); };
+  meetergo('init', {
+    floatingButton: {
+      position: "center",
+      text: "Find your next marketing priority",
+      link: "https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya",
+      backgroundColor: "#000000",
+      textColor: "#FFFFFF",
+      icon: "CalendarPlus2",
+      animation: "none"
+    },
+  });
+</script>
+<script defer src="https://cdn.meetergo.com/v4/integration.js"></script>
+<!-- meetergo widget end -->
 
 <?php get_footer(); ?>
