@@ -25,10 +25,33 @@ function mm_theme_setup() {
 add_action( 'after_setup_theme', 'mm_theme_setup' );
 
 /**
+ * Homepage-specific <title> and meta description.
+ */
+function mm_theme_homepage_document_title( $title_parts ) {
+	if ( is_front_page() ) {
+		$title_parts['title'] = get_theme_mod( 'mm_home_seo_title', 'Mazz Marketing | Strategy, SEO, Ads & AI Automation' );
+		unset( $title_parts['tagline'], $title_parts['site'] );
+	}
+	return $title_parts;
+}
+add_filter( 'document_title_parts', 'mm_theme_homepage_document_title' );
+
+/**
  * Enqueue styles.
  */
 function mm_theme_scripts() {
-	wp_enqueue_style( 'mm-theme-style', get_stylesheet_uri(), [], MM_THEME_VERSION );
+	$is_homepage_or_landing = is_front_page()
+		|| is_page_template( 'page-templates/page-ai-landing.php' )
+		|| is_page_template( 'page-templates/page-lead-gen.php' )
+		|| is_page_template( 'page-templates/page-coaching-landing.php' );
+
+	// The Coming Soon screen's stylesheet (dark, fixed-viewport, flex-centered
+	// body) is only meant for that screen — loading it on any other template
+	// fights that template's own layout (flex-centering + overflow:hidden
+	// clips long-scroll pages to one viewport height).
+	if ( ! $is_homepage_or_landing ) {
+		wp_enqueue_style( 'mm-theme-style', get_stylesheet_uri(), [], MM_THEME_VERSION );
+	}
 
 	if ( is_front_page() ) {
 		wp_enqueue_style( 'mm-home-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap', [], null );
@@ -199,6 +222,9 @@ function mm_theme_customize_register( $wp_customize ) {
 	] );
 
 	$homepage_text_fields = [
+		'mm_home_seo_title'         => [ 'Browser Tab Title (SEO)', 'text' ],
+		'mm_home_meta_description'  => [ 'Meta Description (SEO)', 'textarea' ],
+
 		'mm_home_hero_eyebrow'             => [ 'Hero Eyebrow Label', 'text' ],
 		'mm_home_hero_heading'             => [ 'Hero Heading', 'text' ],
 		'mm_home_hero_sub'                 => [ 'Hero Subheading', 'textarea' ],

@@ -263,6 +263,8 @@ function mm_theme_run_import() {
 // ── Reset ───────────────────────────────────────────────────────────────────────
 function mm_theme_reset_content() {
 	foreach ( [
+		'mm_home_seo_title',
+		'mm_home_meta_description',
 		'mm_home_hero_eyebrow',
 		'mm_home_hero_heading',
 		'mm_home_hero_sub',
@@ -723,6 +725,9 @@ function mm_theme_smart_import_file( $full_path ) {
 // ── Homepage — content import ────────────────────────────────────────────────
 function mm_theme_import_homepage_content() {
 	$mods = [
+		'mm_home_seo_title'        => 'Mazz Marketing | Strategy, SEO, Ads & AI Automation',
+		'mm_home_meta_description' => 'Mazz Marketing by Pourya Mazaheri helps growing businesses improve strategy, SEO, paid media, analytics and AI-enabled marketing systems.',
+
 		'mm_home_hero_eyebrow'             => 'Technical Marketing Manager · SEO · Paid Media · Analytics · AI Automation',
 		'mm_home_hero_heading'             => 'Make your next marketing decision with clarity—not guesswork.',
 		'mm_home_hero_sub'                 => "I'm Pourya Mazaheri, founder of Mazz Marketing. I help growing businesses identify what needs attention first, then connect strategy, SEO, paid media, websites, analytics and AI-enabled workflows into a system they can measure and improve.",
