@@ -1,11 +1,11 @@
 <?php
 /**
- * Fallback template — every URL renders the Coming Soon screen
- * until page-specific templates are added.
+ * Fallback template — renders the Coming Soon screen for any URL
+ * without a more specific template.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require locate_template( 'front-page.php' );
+require locate_template( 'template-parts/coming-soon.php' );

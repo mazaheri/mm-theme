@@ -30,6 +30,12 @@ add_action( 'after_setup_theme', 'mm_theme_setup' );
 function mm_theme_scripts() {
 	wp_enqueue_style( 'mm-theme-style', get_stylesheet_uri(), [], MM_THEME_VERSION );
 
+	if ( is_front_page() ) {
+		wp_enqueue_style( 'mm-home-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap', [], null );
+		wp_enqueue_style( 'mm-home', get_template_directory_uri() . '/assets/css/homepage.css', [], MM_THEME_VERSION );
+		wp_enqueue_script( 'mm-home', get_template_directory_uri() . '/assets/js/homepage.js', [], MM_THEME_VERSION, true );
+	}
+
 	if ( is_page_template( 'page-templates/page-ai-landing.php' ) ) {
 		wp_enqueue_style( 'mm-ai-landing-fonts', 'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap', [], null );
 		wp_enqueue_style( 'mm-ai-landing', get_template_directory_uri() . '/assets/css/orbai-landing.css', [], MM_THEME_VERSION );
@@ -66,6 +72,9 @@ add_filter( 'theme_page_templates', 'mm_theme_register_page_templates' );
  * stylesheet can reliably reset the Coming Soon screen's body rules.
  */
 function mm_theme_ai_landing_body_class( $classes ) {
+	if ( is_front_page() ) {
+		$classes[] = 'mm-homepage';
+	}
 	if ( is_page_template( 'page-templates/page-ai-landing.php' ) ) {
 		$classes[] = 'mm-ai-landing-page';
 	}
@@ -182,6 +191,102 @@ function mm_theme_customize_register( $wp_customize ) {
 		'section' => 'mm_coming_soon',
 		'type'    => 'url',
 	] );
+
+	// ── Homepage section ──────────────────────────────────────────────────
+	$wp_customize->add_section( 'mm_homepage', [
+		'title'    => __( 'Homepage', 'mm-theme' ),
+		'priority' => 30.5,
+	] );
+
+	$homepage_text_fields = [
+		'mm_home_hero_eyebrow'             => [ 'Hero Eyebrow Label', 'text' ],
+		'mm_home_hero_heading'             => [ 'Hero Heading', 'text' ],
+		'mm_home_hero_sub'                 => [ 'Hero Subheading', 'textarea' ],
+		'mm_home_hero_cta_primary_label'   => [ 'Hero Primary CTA Label', 'text' ],
+		'mm_home_hero_cta_secondary_label' => [ 'Hero Secondary CTA Label', 'text' ],
+		'mm_home_hero_microcopy'           => [ 'Hero Microcopy', 'text' ],
+
+		'mm_home_problem_eyebrow'   => [ 'Problem — Eyebrow', 'text' ],
+		'mm_home_problem_heading'   => [ 'Problem — Heading', 'text' ],
+		'mm_home_problem_intro'     => [ 'Problem — Intro Paragraph', 'textarea' ],
+		'mm_home_problem_body'      => [ 'Problem — Body Paragraph', 'textarea' ],
+		'mm_home_problem_quote'     => [ 'Problem — Pull Quote', 'textarea' ],
+		'mm_home_problem_closing'   => [ 'Problem — Closing Paragraph', 'textarea' ],
+		'mm_home_problem_cta_label' => [ 'Problem — CTA Label', 'text' ],
+		'mm_home_problem_microcopy' => [ 'Problem — Microcopy', 'text' ],
+
+		'mm_home_approach_eyebrow' => [ 'Approach — Eyebrow', 'text' ],
+		'mm_home_approach_heading' => [ 'Approach — Heading', 'text' ],
+		'mm_home_approach_sub'     => [ 'Approach — Subheading', 'textarea' ],
+
+		'mm_home_how_eyebrow'    => [ 'How I Work — Eyebrow', 'text' ],
+		'mm_home_how_heading'    => [ 'How I Work — Heading', 'text' ],
+		'mm_home_choice_heading' => [ 'How I Work — Choice Heading', 'text' ],
+
+		'mm_home_services_eyebrow'   => [ 'Services — Eyebrow', 'text' ],
+		'mm_home_services_heading'   => [ 'Services — Heading', 'text' ],
+		'mm_home_services_sub'       => [ 'Services — Subheading', 'textarea' ],
+		'mm_home_services_cta_label' => [ 'Services — CTA Label', 'text' ],
+
+		'mm_home_collab_eyebrow'          => [ 'Collaboration — Eyebrow', 'text' ],
+		'mm_home_collab_heading'          => [ 'Collaboration — Heading', 'text' ],
+		'mm_home_collab_p1'               => [ 'Collaboration — Paragraph 1', 'textarea' ],
+		'mm_home_collab_p2'               => [ 'Collaboration — Paragraph 2', 'textarea' ],
+		'mm_home_collab_p3'               => [ 'Collaboration — Paragraph 3', 'textarea' ],
+		'mm_home_compare_without_heading' => [ 'Collaboration — "Without" Column Heading', 'text' ],
+		'mm_home_compare_with_heading'    => [ 'Collaboration — "With" Column Heading', 'text' ],
+
+		'mm_home_about_eyebrow'            => [ 'About — Eyebrow', 'text' ],
+		'mm_home_about_p1'                 => [ 'About — Paragraph 1', 'textarea' ],
+		'mm_home_about_p2'                 => [ 'About — Paragraph 2', 'textarea' ],
+		'mm_home_about_p3'                 => [ 'About — Paragraph 3', 'textarea' ],
+		'mm_home_about_p4'                 => [ 'About — Paragraph 4', 'textarea' ],
+		'mm_home_about_lightbox_cta_label' => [ 'About — Lightbox CTA Label', 'text' ],
+
+		'mm_home_maia_eyebrow' => [ 'MAIA Teaser — Eyebrow', 'text' ],
+		'mm_home_maia_heading' => [ 'MAIA Teaser — Heading', 'text' ],
+		'mm_home_maia_sub'     => [ 'MAIA Teaser — Subheading', 'textarea' ],
+		'mm_home_maia_body'    => [ 'MAIA Teaser — Body Paragraph', 'textarea' ],
+
+		'mm_home_faq_eyebrow' => [ 'FAQ — Eyebrow', 'text' ],
+		'mm_home_faq_heading' => [ 'FAQ — Heading', 'text' ],
+
+		'mm_home_cta_heading'   => [ 'Footer CTA — Heading', 'text' ],
+		'mm_home_cta_body1'     => [ 'Footer CTA — Paragraph 1', 'textarea' ],
+		'mm_home_cta_body2'     => [ 'Footer CTA — Paragraph 2', 'textarea' ],
+		'mm_home_cta_microcopy' => [ 'Footer CTA — Microcopy', 'text' ],
+
+		'mm_home_logo_text'        => [ 'Header — Logo Text', 'text' ],
+		'mm_home_header_cta_full'  => [ 'Header — CTA Label (full)', 'text' ],
+		'mm_home_header_cta_short' => [ 'Header — CTA Label (short, mobile)', 'text' ],
+		'mm_home_footer_copyright' => [ 'Footer — Copyright Text', 'text' ],
+	];
+
+	foreach ( $homepage_text_fields as $setting_id => $field ) {
+		list( $label, $type ) = $field;
+		$sanitize = ( 'textarea' === $type ) ? 'sanitize_textarea_field' : 'sanitize_text_field';
+		$wp_customize->add_setting( $setting_id, [
+			'default'           => '',
+			'sanitize_callback' => $sanitize,
+			'transport'         => 'refresh',
+		] );
+		$wp_customize->add_control( $setting_id, [
+			'label'   => __( $label, 'mm-theme' ),
+			'section' => 'mm_homepage',
+			'type'    => $type,
+		] );
+	}
+
+	$wp_customize->add_setting( 'mm_home_about_photo_id', [
+		'default'           => 0,
+		'sanitize_callback' => 'absint',
+		'transport'         => 'refresh',
+	] );
+	$wp_customize->add_control( new WP_Customize_Media_Control( $wp_customize, 'mm_home_about_photo_id', [
+		'label'    => __( 'About — Founder Photo', 'mm-theme' ),
+		'section'  => 'mm_homepage',
+		'mime_type' => 'image',
+	] ) );
 
 	// ── AI Landing Page section ──────────────────────────────────────────
 	$wp_customize->add_section( 'mm_ai_landing', [
@@ -350,6 +455,11 @@ function mm_theme_customize_register( $wp_customize ) {
 	] );
 }
 add_action( 'customize_register', 'mm_theme_customize_register' );
+
+/**
+ * Homepage default content and helpers — needed on every front-end request.
+ */
+require get_template_directory() . '/inc/homepage-content.php';
 
 /**
  * Import Demo admin page (Appearance → Import Demo).

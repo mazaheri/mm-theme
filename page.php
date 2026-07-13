@@ -1,11 +1,11 @@
 <?php
 /**
  * Page template — renders the Coming Soon screen for every WP Page
- * until page-specific templates are added.
+ * that has no dedicated template assigned.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-require locate_template( 'front-page.php' );
+require locate_template( 'template-parts/coming-soon.php' );

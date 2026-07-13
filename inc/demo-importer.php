@@ -163,6 +163,11 @@ function mm_theme_get_components() {
 			'desc'  => 'Creates the AI Landing Page, Lead-Gen Landing Page, and Coaching Landing Page as WordPress pages, assigns their templates, and creates the primary navigation menu',
 			'fn'    => 'mm_theme_import_pages',
 		],
+		'homepage'    => [
+			'label' => 'Homepage Content',
+			'desc'  => 'All homepage copy (hero, problem, approach, how-it-works, services, comparison, about, MAIA teaser, FAQ, footer CTA) and the founder photo',
+			'fn'    => 'mm_theme_import_homepage_full',
+		],
 		'coming_soon' => [
 			'label' => 'Coming Soon Page Content',
 			'desc'  => 'Brand label, heading, tagline, meta description, theme color, footer text, social links',
@@ -200,6 +205,12 @@ function mm_theme_get_component( $key ) {
 function mm_theme_check_import_status() {
 	$warnings = [];
 
+	if ( ! get_option( 'mm_theme_pages_imported' ) ) {
+		$warnings[] = 'Pages &amp; Navigation not created yet';
+	}
+	if ( ! get_theme_mod( 'mm_home_hero_heading' ) ) {
+		$warnings[] = 'Homepage content not synced';
+	}
 	if ( ! get_theme_mod( 'mm_brand_label' ) ) {
 		$warnings[] = 'Coming Soon content not synced';
 	}
@@ -216,7 +227,7 @@ function mm_theme_check_import_status() {
 		$warnings[] = 'Coaching Landing Page content not synced';
 	}
 
-	if ( count( $warnings ) >= 5 ) {
+	if ( count( $warnings ) >= 7 ) {
 		return [
 			'status'   => 'needs_reset',
 			'warnings' => $warnings,
@@ -239,6 +250,8 @@ function mm_theme_run_import() {
 	require_once ABSPATH . 'wp-admin/includes/image.php';
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
+	mm_theme_import_pages();
+	mm_theme_import_homepage_full();
 	mm_theme_import_coming_soon_content();
 	mm_theme_import_ai_landing_content();
 	mm_theme_import_ai_landing_faq();
@@ -250,6 +263,58 @@ function mm_theme_run_import() {
 // ── Reset ───────────────────────────────────────────────────────────────────────
 function mm_theme_reset_content() {
 	foreach ( [
+		'mm_home_hero_eyebrow',
+		'mm_home_hero_heading',
+		'mm_home_hero_sub',
+		'mm_home_hero_cta_primary_label',
+		'mm_home_hero_cta_secondary_label',
+		'mm_home_hero_microcopy',
+		'mm_home_problem_eyebrow',
+		'mm_home_problem_heading',
+		'mm_home_problem_intro',
+		'mm_home_problem_body',
+		'mm_home_problem_quote',
+		'mm_home_problem_closing',
+		'mm_home_problem_cta_label',
+		'mm_home_problem_microcopy',
+		'mm_home_approach_eyebrow',
+		'mm_home_approach_heading',
+		'mm_home_approach_sub',
+		'mm_home_how_eyebrow',
+		'mm_home_how_heading',
+		'mm_home_choice_heading',
+		'mm_home_services_eyebrow',
+		'mm_home_services_heading',
+		'mm_home_services_sub',
+		'mm_home_services_cta_label',
+		'mm_home_collab_eyebrow',
+		'mm_home_collab_heading',
+		'mm_home_collab_p1',
+		'mm_home_collab_p2',
+		'mm_home_collab_p3',
+		'mm_home_compare_without_heading',
+		'mm_home_compare_with_heading',
+		'mm_home_about_eyebrow',
+		'mm_home_about_p1',
+		'mm_home_about_p2',
+		'mm_home_about_p3',
+		'mm_home_about_p4',
+		'mm_home_about_lightbox_cta_label',
+		'mm_home_about_photo_id',
+		'mm_home_maia_eyebrow',
+		'mm_home_maia_heading',
+		'mm_home_maia_sub',
+		'mm_home_maia_body',
+		'mm_home_faq_eyebrow',
+		'mm_home_faq_heading',
+		'mm_home_cta_heading',
+		'mm_home_cta_body1',
+		'mm_home_cta_body2',
+		'mm_home_cta_microcopy',
+		'mm_home_logo_text',
+		'mm_home_header_cta_full',
+		'mm_home_header_cta_short',
+		'mm_home_footer_copyright',
 		'mm_brand_label',
 		'mm_heading',
 		'mm_tagline',
@@ -291,6 +356,14 @@ function mm_theme_reset_content() {
 		'mm_coaching_metrics',
 		'mm_coaching_testimonials',
 		'mm_coaching_faq',
+		'mm_theme_pages_imported',
+		'mm_home_approach_cards',
+		'mm_home_process_steps',
+		'mm_home_choice_cards',
+		'mm_home_service_cards',
+		'mm_home_compare_without_items',
+		'mm_home_compare_with_items',
+		'mm_home_faq',
 	] as $opt ) {
 		delete_option( $opt );
 	}
@@ -498,4 +571,244 @@ function mm_theme_import_coaching_content() {
 			'a' => 'We look at your website, any active ad campaigns, and your analytics setup. You leave with at least two specific things you can fix immediately, regardless of whether we work together.',
 		],
 	] );
+}
+
+// ── Pages & Navigation ────────────────────────────────────────────────────────
+function mm_theme_import_pages() {
+	$pages = [
+		[
+			'title'    => 'AI Marketing',
+			'template' => 'page-templates/page-ai-landing.php',
+			'opt_key'  => 'mm_page_id_ai_landing',
+		],
+		[
+			'title'    => 'Lead Generation',
+			'template' => 'page-templates/page-lead-gen.php',
+			'opt_key'  => 'mm_page_id_lead_gen',
+		],
+		[
+			'title'    => 'Coaching',
+			'template' => 'page-templates/page-coaching-landing.php',
+			'opt_key'  => 'mm_page_id_coaching',
+		],
+	];
+
+	$created_ids = [];
+
+	foreach ( $pages as $page ) {
+		$existing_id = (int) get_option( $page['opt_key'] );
+		if ( $existing_id && get_post_status( $existing_id ) === 'publish' ) {
+			// Page already exists — re-apply template in case it changed.
+			update_post_meta( $existing_id, '_wp_page_template', $page['template'] );
+			$created_ids[ $page['title'] ] = $existing_id;
+			continue;
+		}
+
+		// Search by title as a fallback (handles manual page creation).
+		$found = get_posts( [
+			'post_type'      => 'page',
+			'post_status'    => 'publish',
+			'title'          => $page['title'],
+			'posts_per_page' => 1,
+			'fields'         => 'ids',
+		] );
+
+		if ( $found ) {
+			$page_id = (int) $found[0];
+		} else {
+			$page_id = wp_insert_post( [
+				'post_title'   => $page['title'],
+				'post_content' => '',
+				'post_status'  => 'publish',
+				'post_type'    => 'page',
+				'post_author'  => get_current_user_id(),
+			] );
+		}
+
+		if ( ! is_wp_error( $page_id ) && $page_id ) {
+			update_post_meta( $page_id, '_wp_page_template', $page['template'] );
+			update_option( $page['opt_key'], $page_id );
+			$created_ids[ $page['title'] ] = $page_id;
+		}
+	}
+
+	// Create / update the primary navigation menu.
+	$menu_name = 'Primary Menu';
+	$menu_id   = (int) get_option( 'mm_primary_menu_id' );
+
+	if ( ! $menu_id || ! is_nav_menu( $menu_id ) ) {
+		$menu_id = wp_create_nav_menu( $menu_name );
+		if ( ! is_wp_error( $menu_id ) ) {
+			update_option( 'mm_primary_menu_id', $menu_id );
+		}
+	}
+
+	if ( ! is_wp_error( $menu_id ) && $menu_id ) {
+		// Remove all existing items so re-running is idempotent.
+		$existing_items = wp_get_nav_menu_items( $menu_id );
+		if ( $existing_items ) {
+			foreach ( $existing_items as $item ) {
+				wp_delete_post( $item->ID, true );
+			}
+		}
+
+		foreach ( $created_ids as $title => $page_id ) {
+			wp_update_nav_menu_item( $menu_id, 0, [
+				'menu-item-title'     => $title,
+				'menu-item-object'    => 'page',
+				'menu-item-object-id' => $page_id,
+				'menu-item-type'      => 'post_type',
+				'menu-item-status'    => 'publish',
+			] );
+		}
+
+		// Assign to the primary location.
+		$locations = get_theme_mod( 'nav_menu_locations', [] );
+		$locations['primary'] = (int) $menu_id;
+		set_theme_mod( 'nav_menu_locations', $locations );
+	}
+
+	update_option( 'mm_theme_pages_imported', '1' );
+}
+
+// ── Smart file import (Pattern 1 — hash-dedup, v5 methodology) ───────────────
+function mm_theme_smart_import_file( $full_path ) {
+	if ( ! file_exists( $full_path ) ) {
+		return new WP_Error( 'not_found', "File not found: $full_path" );
+	}
+
+	$hash      = md5_file( $full_path );
+	$norm_path = wp_normalize_path( $full_path );
+
+	$existing = get_posts( [
+		'post_type'      => 'attachment',
+		'post_status'    => 'any',
+		'posts_per_page' => 1,
+		'meta_query'     => [ [ 'key' => '_source_file_path', 'value' => $norm_path ] ],
+	] );
+
+	if ( $existing ) {
+		$att_id = $existing[0]->ID;
+		if ( get_post_meta( $att_id, '_source_file_hash', true ) === $hash ) {
+			return [ 'id' => $att_id, 'status' => 'skipped' ];
+		}
+		wp_delete_attachment( $att_id, true );
+	}
+
+	$filename = basename( $full_path );
+	$upload   = wp_upload_bits( $filename, null, file_get_contents( $full_path ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	if ( ! empty( $upload['error'] ) ) {
+		return new WP_Error( 'upload_failed', $upload['error'] );
+	}
+
+	$mime   = wp_check_filetype( $upload['file'] );
+	$att_id = wp_insert_attachment( [
+		'guid'           => $upload['url'],
+		'post_mime_type' => $mime['type'],
+		'post_title'     => sanitize_file_name( $filename ),
+		'post_status'    => 'inherit',
+	], $upload['file'] );
+
+	if ( is_wp_error( $att_id ) ) {
+		return $att_id;
+	}
+
+	wp_update_attachment_metadata( $att_id, wp_generate_attachment_metadata( $att_id, $upload['file'] ) );
+	update_post_meta( $att_id, '_source_file_path', $norm_path );
+	update_post_meta( $att_id, '_source_file_hash', $hash );
+
+	return [ 'id' => $att_id, 'status' => 'imported' ];
+}
+
+// ── Homepage — content import ────────────────────────────────────────────────
+function mm_theme_import_homepage_content() {
+	$mods = [
+		'mm_home_hero_eyebrow'             => 'Technical Marketing Manager · SEO · Paid Media · Analytics · AI Automation',
+		'mm_home_hero_heading'             => 'Make your next marketing decision with clarity—not guesswork.',
+		'mm_home_hero_sub'                 => "I'm Pourya Mazaheri, founder of Mazz Marketing. I help growing businesses identify what needs attention first, then connect strategy, SEO, paid media, websites, analytics and AI-enabled workflows into a system they can measure and improve.",
+		'mm_home_hero_cta_primary_label'   => 'Find your next marketing priority →',
+		'mm_home_hero_cta_secondary_label' => 'Explore how I work',
+		'mm_home_hero_microcopy'           => '30 minutes. One focused conversation. A clearer next step. No obligation to continue.',
+
+		'mm_home_problem_eyebrow'   => 'The Challenge',
+		'mm_home_problem_heading'   => 'Marketing gets expensive when the pieces do not work together.',
+		'mm_home_problem_intro'     => 'Most businesses do not have one marketing problem. They have several disconnected ones.',
+		'mm_home_problem_body'      => 'Ads may generate clicks, while the website does not convert. Content may be published consistently, but it is not connected to an offer. Data may exist, but it may not be reliable or useful enough to guide decisions. Leads may arrive, then receive inconsistent follow-up.',
+		'mm_home_problem_quote'     => 'This does not mean your marketing is broken or that someone failed. It often means the system was built in the wrong order, measured incompletely, or never connected end to end.',
+		'mm_home_problem_closing'   => 'My role is not to take control away from you. It is to help you understand what matters, choose the right priority, and build a practical path forward.',
+		'mm_home_problem_cta_label' => 'Clarify what needs attention first →',
+		'mm_home_problem_microcopy' => 'You do not need to know whether the issue is SEO, ads, tracking, your website or something else. A website link and a short description of your goal are enough to start.',
+
+		'mm_home_approach_eyebrow' => 'How I Think About It',
+		'mm_home_approach_heading' => 'Clear strategy. Reliable data. Practical execution.',
+		'mm_home_approach_sub'     => 'I do not start by selling a channel, a campaign type or a tool. We start by understanding the business, the offer, the customer journey and the gap that is currently limiting progress.',
+
+		'mm_home_how_eyebrow'    => 'How I Work',
+		'mm_home_how_heading'    => 'One clear starting point. Different ways to work together.',
+		'mm_home_choice_heading' => 'Choose the right level of support',
+
+		'mm_home_services_eyebrow'   => 'Ways I Can Help',
+		'mm_home_services_heading'   => 'Ways I can help',
+		'mm_home_services_sub'       => 'Engagements are designed around the bottleneck that matters most right now. That may be strategy, conversion, visibility, tracking or a workflow that is taking too much time to run manually.',
+		'mm_home_services_cta_label' => 'Discuss the right starting point →',
+
+		'mm_home_collab_eyebrow'          => 'How This Is Different',
+		'mm_home_collab_heading'          => 'Direct expertise, not a hand-off process.',
+		'mm_home_collab_p1'               => 'When you work with Mazz Marketing, you work directly with me.',
+		'mm_home_collab_p2'               => 'That means the person who understands the strategy is also involved in the analysis, the recommendations and the work itself. There is no sales call followed by a hand-off to someone who has never heard the full context.',
+		'mm_home_collab_p3'               => 'You should not need to become dependent on unclear reports or black-box marketing. My role is to help you make better decisions and build capabilities that remain useful after the project ends.',
+		'mm_home_compare_without_heading' => 'Common agency model',
+		'mm_home_compare_with_heading'    => 'Working with Mazz Marketing',
+
+		'mm_home_about_eyebrow'             => 'About Pourya Mazaheri',
+		'mm_home_about_p1'                  => "I'm Pourya Mazaheri, a Technical Marketing Manager and the founder of Mazz Marketing.",
+		'mm_home_about_p2'                  => 'My work sits at the intersection of strategy and execution: SEO, Google Ads, Meta Ads, websites, conversion paths, analytics, tracking and AI-enabled marketing workflows.',
+		'mm_home_about_p3'                  => 'I work best with people who value clear thinking, direct communication and practical progress. Sometimes the right answer is to improve a campaign. Sometimes it is to fix the website, the offer, the tracking or the follow-up process first. And sometimes the most honest answer is that more advertising is not the next move.',
+		'mm_home_about_p4'                  => 'Mazz Marketing is where I turn this work into focused consulting, implementation support, practical frameworks and, over time, educational resources for people who want to understand and improve their own marketing systems.',
+		'mm_home_about_lightbox_cta_label'  => 'Request an early consultation →',
+
+		'mm_home_maia_eyebrow' => 'Coming Soon — The MAIA Method by Mazz Marketing',
+		'mm_home_maia_heading' => 'MAIA — Marketing AI Automations',
+		'mm_home_maia_sub'     => 'The complete system to build AI-powered marketing workflows for content, leads, ads, sales and reporting.',
+		'mm_home_maia_body'    => 'Mazz Marketing is building a growing library of practical insights, templates and learning experiences for marketers, founders and small teams — starting with MAIA.',
+
+		'mm_home_faq_eyebrow' => 'FAQ',
+		'mm_home_faq_heading' => 'Questions people ask before booking',
+
+		'mm_home_cta_heading'   => 'Not sure what to fix first?',
+		'mm_home_cta_body1'     => 'Request a focused 30-minute clarity call. We will discuss your current marketing situation, the goal that matters most and the most useful next step for your business.',
+		'mm_home_cta_body2'     => 'You are not committing to a project by requesting the call. The purpose is to gain clarity before spending more time, budget or energy in the wrong place.',
+		'mm_home_cta_microcopy' => 'You do not need to know whether the issue is SEO, ads, tracking, your website or something else. A website link and a short description of your goal are enough to start.',
+
+		'mm_home_logo_text'       => 'Mazz Marketing',
+		'mm_home_header_cta_full'  => 'Request an early consultation',
+		'mm_home_header_cta_short' => 'Request a call',
+		'mm_home_footer_copyright' => '&copy; ' . gmdate( 'Y' ) . ' Mazz Marketing. All rights reserved.',
+	];
+
+	foreach ( $mods as $key => $value ) {
+		set_theme_mod( $key, $value );
+	}
+
+	update_option( 'mm_home_approach_cards', mm_theme_default_approach_cards() );
+	update_option( 'mm_home_process_steps', mm_theme_default_process_steps() );
+	update_option( 'mm_home_choice_cards', mm_theme_default_choice_cards() );
+	update_option( 'mm_home_service_cards', mm_theme_default_service_cards() );
+	update_option( 'mm_home_compare_without_items', mm_theme_default_compare_without() );
+	update_option( 'mm_home_compare_with_items', mm_theme_default_compare_with() );
+	update_option( 'mm_home_faq', mm_theme_default_home_faq() );
+}
+
+// ── Homepage — about photo import ────────────────────────────────────────────
+function mm_theme_import_homepage_images() {
+	$result = mm_theme_smart_import_file( get_template_directory() . '/content/images/homepage/about-photo.png' );
+	if ( ! is_wp_error( $result ) ) {
+		set_theme_mod( 'mm_home_about_photo_id', $result['id'] );
+	}
+}
+
+// ── Homepage — combined component (registered in the component registry) ───
+function mm_theme_import_homepage_full() {
+	mm_theme_import_homepage_content();
+	mm_theme_import_homepage_images();
 }
