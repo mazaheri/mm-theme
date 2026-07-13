@@ -28,7 +28,7 @@ get_header();
       <a href="#about">About</a>
       <a href="#faq">FAQ</a>
     </nav>
-    <a href="#contact" class="btn btn-primary btn-small header-cta">
+    <a href="#contact" class="btn btn-primary btn-small header-cta meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">
       <span class="header-cta-full">Request an early consultation</span>
       <span class="header-cta-short">Request a call</span>
     </a>
@@ -110,7 +110,7 @@ get_header();
         -->
 
         <div class="hero-ctas">
-          <a href="#contact" class="btn btn-primary btn-large">Find your next marketing priority &rarr;</a>
+          <a href="#contact" class="btn btn-primary btn-large meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">Find your next marketing priority &rarr;</a>
           <a href="#how-it-works" class="btn btn-secondary btn-large">Explore how I work</a>
         </div>
         <p class="hero-microcopy">30 minutes. One focused conversation. A clearer next step. No obligation to continue.</p>
@@ -133,7 +133,7 @@ get_header();
 
         <p>My role is not to take control away from you. It is to help you understand what matters, choose the right priority, and build a practical path forward.</p>
 
-        <a href="#contact" class="btn btn-primary">Clarify what needs attention first &rarr;</a>
+        <a href="#contact" class="btn btn-primary meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">Clarify what needs attention first &rarr;</a>
         <p class="hero-microcopy">You do not need to know whether the issue is SEO, ads, tracking, your website or something else. A website link and a short description of your goal are enough to start.</p>
       </div>
     </section>
@@ -294,7 +294,7 @@ get_header();
       </div>
 
       <div class="compare-cta">
-        <a href="#contact" class="btn btn-primary">Discuss the right starting point &rarr;</a>
+        <a href="#contact" class="btn btn-primary meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">Discuss the right starting point &rarr;</a>
       </div>
     </div>
   </section>
@@ -366,7 +366,7 @@ get_header();
       <div class="lightbox-text">
         <span class="eyebrow">About Pourya Mazaheri</span>
         <p>I'm Pourya Mazaheri, a Technical Marketing Manager and the founder of Mazz Marketing. My work sits at the intersection of strategy and execution: SEO, Google Ads, Meta Ads, websites, conversion paths, analytics, tracking and AI-enabled marketing workflows.</p>
-        <a href="#contact" class="btn btn-primary">Request an early consultation &rarr;</a>
+        <a href="#contact" class="btn btn-primary meetergo-modal-button" link="https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya">Request an early consultation &rarr;</a>
       </div>
     </div>
   </div>
@@ -563,22 +563,7 @@ get_header();
 })();
 </script>
 
-<!-- meetergo widget start -->
-<script>
-  window.meetergo = window.meetergo || function(){ (window.meetergo.q = window.meetergo.q || []).push(arguments); };
-  meetergo('init', {
-    floatingButton: {
-      position: "center",
-      text: "Find your next marketing priority",
-      link: "https://cal.meetergo.com/pourya-mazaheri-fard/30-min-meeting-with-pourya",
-      backgroundColor: "#000000",
-      textColor: "#FFFFFF",
-      icon: "CalendarPlus2",
-      animation: "none"
-    },
-  });
-</script>
+<!-- meetergo widget: powers the inline scheduler above and every .meetergo-modal-button CTA on this page -->
 <script defer src="https://cdn.meetergo.com/v4/integration.js"></script>
-<!-- meetergo widget end -->
 
 <?php get_footer(); ?>
