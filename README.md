@@ -4,80 +4,44 @@ WordPress theme for Mazz Marketing.
 
 ## Current status
 
-The site homepage (`front-page.php`) is the full Mazz Marketing marketing
-page — hero, problem, approach, how-it-works, services, personal
-collaboration comparison, about, MAIA teaser, FAQ, and footer CTA. Every
-heading, paragraph, label, and the founder photo is editable via
-**Appearance → Customize → Homepage** (singular fields) or pushed from
-defaults via **Appearance → Import Demo** (including the repeatable card/FAQ
-lists, which are import-only — see `mm_theme_import_homepage_content()` in
-`inc/demo-importer.php`). Its styles/scripts live in
-`assets/css/homepage.css` and `assets/js/homepage.js`, enqueued only on the
-front page (see `mm_theme_scripts()` in `functions.php`).
+The theme ships exactly two things:
 
-Any WP Page without a dedicated template, plus any URL with no more specific
-template (404s, archives, etc.), falls back to the Coming Soon launch screen
-(`template-parts/coming-soon.php`, via `page.php` / `index.php`). Its copy,
-social links, and colors are editable via **Appearance → Customize → Coming
-Soon Page** (see `mm_theme_customize_register()` in `functions.php`).
+- **Homepage** (`front-page.php`) — a direct, static port of the approved
+  design in the sibling `final/` folder (`final/index.html` +
+  `final/style.css`). The markup and copy are hardcoded to match that source
+  file exactly; the only change from the source HTML is resolving the
+  founder photo's `src` to the theme's asset URL
+  (`content/images/homepage/about-photo.png`). Its stylesheet
+  (`assets/css/homepage.css`) is a byte-for-byte copy of `final/style.css`,
+  linked directly in the page's own `<head>` (see the `is_front_page()`
+  branch in `header.php`) rather than through `wp_enqueue_style()`, so the
+  `<head>` matches `final/index.html` exactly (title, meta description,
+  font preconnects, stylesheet order).
+- **Coming Soon screen** (`template-parts/coming-soon.php`) — the fallback
+  for any WP Page without a dedicated template, and for any URL with no
+  more specific template (404s, archives, etc.), via `page.php` /
+  `index.php`. Copy, social links, and colors are editable via
+  **Appearance → Customize → Coming Soon Page** (see
+  `mm_theme_customize_register()` in `functions.php`).
 
-A second, selectable page template is available: **AI Landing Page**
-(`page-templates/page-ai-landing.php`). Assign it to any WP Page via
-**Page Attributes → Template** in the block/classic editor. It ships a full
-marketing landing page (hero, benefits, features, services, process, case
-study, testimonials, pricing, comparison, team, FAQ, footer CTA), styled
-independently from the Coming Soon screen via `assets/css/orbai-landing.css`
-and `assets/js/orbai-landing.js` (enqueued only on that template — see
-`mm_theme_scripts()` in `functions.php`). Its visual system (light background,
-soft-shadow floating cards, black pill buttons, ripple-orb hero/footer
-graphic) is modeled on the Orbai Framer template's design language; all copy,
-pricing, team, and FAQ content is original to Mazz Marketing. A matching
-standalone HTML/CSS/JS build lives in the sibling `orbai-landing-html/`
-folder for quick previewing outside WordPress.
+There is no Import Demo, no Customizer section, and no theme mods for the
+homepage — its content lives directly in `front-page.php`, matching the
+final design file 1:1. To change the homepage, edit `final/index.html` (the
+source of truth) and `front-page.php` together.
 
 `screenshot.png` (theme thumbnail shown in Appearance → Themes) is included.
 
-## Import Demo
+## Why no theme mods on the homepage
 
-**Appearance → Import Demo** pushes this theme's default copy into the
-database — no WP-CLI access needed on production (see `inc/demo-importer.php`,
-following the Version 5 Import Demo pattern documented in
-`version 5 import demo workflow/CLAUDE.md`).
-
-Components:
-- **Pages & Navigation** — creates three WordPress pages (AI Marketing →
-  `page-templates/page-ai-landing.php`, Lead Generation →
-  `page-templates/page-lead-gen.php`, Coaching →
-  `page-templates/page-coaching-landing.php`), assigns their templates, and
-  wires up the primary navigation menu. **Run this first on a fresh install.**
-- **Homepage Content** — all homepage copy (theme mods) and the founder
-  photo (imported as a real WP attachment via the hash-dedup Smart Import
-  pattern, stored as the `mm_home_about_photo_id` theme mod), plus the
-  repeatable card/FAQ lists (approach cards, process steps, choice cards,
-  service cards, comparison list items, FAQ) stored as options.
-- **Coming Soon Page Content** — brand label, heading, tagline, meta
-  description, theme color, footer text, social links (theme mods, also
-  editable individually via Appearance → Customize → Coming Soon Page).
-- **AI Landing Page Content** — hero eyebrow/heading/subhead, founder quote,
-  contact email (theme mods, also editable via Appearance → Customize →
-  AI Landing Page).
-- **AI Landing Page — FAQ** — the 5 question/answer pairs (stored as the
-  `mm_ai_landing_faq` option, a plain array of `['q' => ..., 'a' => ...]`).
-- **AI Landing Page — Team** — the 4 team member entries (stored as the
-  `mm_ai_landing_team` option, a plain array of
-  `['name' => ..., 'role' => ..., 'initials' => ...]`).
-- **Coaching Landing Page Content** — hero copy, bio, services, steps,
-  metrics, testimonials, FAQ, Calendly URL, and about image for the Coaching
-  Landing Page.
-
-Run components individually via **Sync Selected**, all at once via **Sync
-All**, or wipe and reapply defaults via **Reset & Reimport Everything**. The
-page template always falls back to the hardcoded defaults if a mod/option is
-empty, so the page renders correctly even before the importer has run.
+Earlier versions of this theme tried to make every homepage string editable
+via Customizer/Import Demo. That approach drifted from the approved design
+(a leftover global stylesheet meant only for the Coming Soon screen was
+fighting the homepage's layout) and made the homepage harder to keep in
+sync with `final/`. The homepage is now intentionally static — a pixel copy
+— to guarantee it never diverges from the approved design.
 
 ## Next steps
 
-Additional page templates (blog, services, etc.) can be added the same way
-as the AI Landing Page. Follow the theme bible in
-`version 4 download image and blog/` and `version 5 import demo workflow/`
-for the conversion, dynamic-layer, and deploy methodology used on this project.
+If new pages are needed later, give them their own template file and keep
+the same rule: the static design file is the source of truth, and the WP
+template is a direct port of it — not a re-interpretation.
